@@ -1,0 +1,34 @@
+# Download trades from start date to end date in "YYYY-MM-DD HH:MI:Sec" format.
+download_start_date: "2020-03-28 00:00:00"
+download_end_date: "2021-05-04 15:00:00"
+
+# Save trade history as csv.
+save_trade_history_as_csv: True
+
+# If enabled, download all pairs associated to quote assets from except
+# excluded base assets from download start date to download end date.
+download_all_associated_pairs:
+  enabled: True
+  quote_assets:
+    - XBT
+  excluded_base_assets:
+    - .d
+    - ZCAD
+    - ZEUR
+    - ZGBP
+    - ZJPY
+    - ZUSD
+
+# If download_all_associated_pairs is not enabled, download custom list of pairs.
+# List of available pairs: https://api.kraken.com/0/public/AssetPairs
+download_custom_pairs:
+  - ETHXBT
+  - BTCUSDT
+
+# OHLCV frequencies to save.
+# Supported values:
+# 1M, 3M, 5M, 15M, 30M, 1H, 2H, 4H, 6H, 8H, 12H, 1D, 3D, 1W
+ohlc_frequencies:
+  - 1H
+  - 4H
+  - 1D

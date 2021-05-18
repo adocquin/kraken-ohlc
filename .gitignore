@@ -1,0 +1,6 @@
+# PyCharm
+.idea/
+__pycache__/
+
+# outputs
+data/
