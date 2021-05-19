@@ -44,6 +44,7 @@ def handle_pair_frequency_ohlc(
     :param frequency: OHLC frequency as string.
     :return: None
     """
+    frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
     ohlc_filepath = define_filepath(
         "ohlc", pair, config.start_datetime, config.end_datetime, frequency
     )

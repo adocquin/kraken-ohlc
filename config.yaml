@@ -2,6 +2,14 @@
 download_start_date: "2020-03-28 00:00:00"
 download_end_date: "2021-05-04 15:00:00"
 
+# OHLCV frequencies to save.
+# Supported values:
+# 1M, 3M, 5M, 15M, 30M, 1H, 2H, 4H, 6H, 8H, 12H, 1D, 3D, 1W
+ohlc_frequencies:
+  - 1H
+  - 4H
+  - 1D
+
 # Save trade history as csv.
 save_trade_history_as_csv: True
 
@@ -25,10 +33,3 @@ download_custom_pairs:
   - ETHXBT
   - BTCUSDT
 
-# OHLCV frequencies to save.
-# Supported values:
-# 1M, 3M, 5M, 15M, 30M, 1H, 2H, 4H, 6H, 8H, 12H, 1D, 3D, 1W
-ohlc_frequencies:
-  - 1H
-  - 4H
-  - 1D
