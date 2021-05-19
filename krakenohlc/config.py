@@ -127,27 +127,6 @@ class Config:
             frequencies.append(frequency)
         self.ohlc_frequencies = frequencies
 
-    def __get_asset_altname_from_kraken(self, asset: str) -> str:
-        """
-        From passed asset name, get its altname on Kraken API.
-
-        :param asset: Asset as string.
-        :return: Asset altname as string.
-        """
-        available_assets = self.ka.get_assets()
-        try:
-            altname = [
-                asset_infos.get("altname")
-                for asset_id, asset_infos in available_assets.items()
-                if asset_id == asset or asset_infos.get("altname") == asset
-            ][0]
-        except IndexError:
-            raise ValueError(
-                f"{asset} asset not available on Kraken. Available assets:"
-                f" {available_assets.keys()}."
-            )
-        return altname
-
     def __get_config_pairs(self) -> None:
         """
         Set list of pairs to download from based on Config attributes.
@@ -160,7 +139,7 @@ class Config:
         if self.download_all_associated_pairs.get("enabled"):
             quote_assets = self.download_all_associated_pairs.get("quote_assets")
             for quote_asset in quote_assets:
-                asset = self.__get_asset_altname_from_kraken(quote_asset)
+                asset = self.ka.get_asset_altname(quote_asset)
                 pairs += [pair for pair in asset_pairs if asset in pair]
                 if not pairs:
                     raise ValueError(
