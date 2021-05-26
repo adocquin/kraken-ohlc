@@ -2,6 +2,41 @@ import datetime
 import pandas as pd
 
 
+def pandas_to_kraken_ohlc_frequencies(ohlc_frequencies: list) -> list:
+    """
+    Convert configuration file frequencies to pandas frequencies format.
+
+    :param ohlc_frequencies: List of pandas ohlc frequencies to convert.
+    :return: List of converted frequencies.
+    """
+    supported_frequencies = [
+        "1M",
+        "3M",
+        "5M",
+        "15M",
+        "30M",
+        "1H",
+        "2H",
+        "4H",
+        "6H",
+        "8H",
+        "12H",
+        "1D",
+        "3D",
+        "1W",
+    ]
+    frequencies = list()
+    for frequency in ohlc_frequencies:
+        if frequency not in supported_frequencies:
+            raise ValueError(
+                f"Unsupported frequency {frequency}. Supported "
+                f"frequencies: {supported_frequencies}"
+            )
+        frequency.replace("M", "T").replace("1W", "1W-MON")
+        frequencies.append(frequency)
+    return frequencies
+
+
 def check_trades_ohlc_start_end_dates(
     date: datetime, start: bool, frequency: str
 ) -> bool:

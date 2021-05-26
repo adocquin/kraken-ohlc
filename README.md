@@ -10,7 +10,7 @@ Kraken OHLC will create two folders at specified path: **trade_history** and **o
 #### Structure example
 
 ```
-data_folder
+data
 └───ohlc
 │   │   AAVEXBT_2021-05-04T13-00-00_2021-05-04T15-00-00_1H.csv
 │   │   ADAXBT_2021-05-04T13-00-00_2021-05-04T15-00-00_1H.csv
@@ -108,11 +108,16 @@ docker rm kraken-ohlc
 ## Usage without Docker
 You must specify your configuration in a *config.yaml* file in the *Kraken-OHLC* root 
 folder.<br>
+
+Install python plugins requirements inside repository folder using:
+```sh
+python -m pip install -r requirements.txt
+```
 You can launch the program from the folder where you downloaded the repository folder using:
 ```sh
 python kraken-ohlc
 ```
-Or inside Kraken-OHLC base directory using:
+Or inside Kraken-OHLC repository directory using:
 ```sh
 python __main__.py
 ```

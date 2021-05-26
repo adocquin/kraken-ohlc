@@ -1,0 +1,98 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection:
+      - close
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: GET
+    uri: https://api.kraken.com/0/public/AssetPairs
+  response:
+    body:
+      string: '{"error":[],"result":{"AAVEAUD":{"altname":"AAVEAUD","wsname":"AAVE\/AUD","aclass_base":"currency","base":"AAVE","aclass_quote":"currency","quote":"ZAUD","lot":"unit","pair_decimals":2,"lot_decimals":8,"lot_multiplier":1,"leverage_buy":[],"leverage_sell":[],"fees":[[0,0.26],[50000,0.24],[100000,0.22],[250000,0.2],[500000,0.18],[1000000,0.16],[2500000,0.14],[5000000,0.12],[10000000,0.1]],"fees_maker":[[0,0.16],[50000,0.14],[100000,0.12],[250000,0.1],[500000,0.08],[1000000,0.06],[2500000,0.04],[5000000,0.02],[10000000,0]],"fee_volume_currency":"ZUSD","margin_call":80,"margin_stop":40,"ordermin":"0.02"}}}'
+    headers:
+      Age:
+      - '2'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 65592dba8fd5edcb-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 26 May 2021 18:48:36 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=9e20036cfef6971a4bf0dfddb1cb3e151d6a1511-1622054916-1800-ARl1sReWk3LeycuTGTHzOtJZ/LSUFudQEpeJcf8TxEbEMemK9K5LL4+Btkx0wBboioa+8RE0LP7b3bRQL3Y2d4Y=;
+        path=/; expires=Wed, 26-May-21 19:18:36 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - public,max-age=20,smaxage=20
+      cf-request-id:
+      - 0a4b9ae8930000edcb4aa11000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Connection:
+      - close
+      Host:
+      - api.kraken.com
+      User-Agent:
+      - Python-urllib/3.8
+    method: GET
+    uri: https://api.kraken.com/0/public/Assets
+  response:
+    body:
+      string: '{"error":[],"result":{"XXBT":{"aclass":"currency","altname":"XBT","decimals":10,"display_decimals":5}}}'
+    headers:
+      Age:
+      - '41'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 65592dbb0ac8a849-CDG
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 26 May 2021 18:48:36 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cf_bm=8124e8a27e98594d813c6abb81a4e8588533a819-1622054916-1800-AQX1lbEQJ5LtlUNVgiT3FS/xlMsjPQzS+NS3UDO7BeDAOCWoVCXDVekTUj2VeJRpa7p2aIsNZW1vfIMKP2wgTdM=;
+        path=/; expires=Wed, 26-May-21 19:18:36 GMT; domain=.kraken.com; HttpOnly;
+        Secure; SameSite=None
+      Transfer-Encoding:
+      - chunked
+      cache-control:
+      - public,max-age=51,smaxage=51
+      cf-request-id:
+      - 0a4b9ae8ec0000a849aa9aa000000001
+      strict-transport-security:
+      - max-age=15768000
+      vary:
+      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+version: 1
