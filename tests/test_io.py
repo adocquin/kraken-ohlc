@@ -5,12 +5,14 @@ import pytest
 
 
 def test_define_filepath():
+    # Assert filepath generation for OHLC data
     correct_filepath = "ohlc/AAVEXBT_2020-03-28T00-00-00_2021-05-04T15-00-00_4H.csv"
     filepath = define_filepath(
         "ohlc", "AAVEXBT", "2020-03-28 00:00:00", "2021-05-04 " "15:00:00", "4H"
     )
     assert filepath == correct_filepath
 
+    # Assert path generation for trade history data
     correct_filepath = (
         "trade_history/AAVEXBT_2020-03-28T00-00-00_2021-05-04T15-00-00.csv"
     )
