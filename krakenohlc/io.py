@@ -41,7 +41,7 @@ def read_csv(filepath: str) -> pd.DataFrame:
         df = pd.read_csv(filepath, index_col="time", parse_dates=["time"])
     except (FileNotFoundError, pd.errors.EmptyDataError):
         df = pd.DataFrame()
-    except (pd.errors.ParserError, IsADirectoryError) as e:
+    except (ValueError, pd.errors.ParserError, IsADirectoryError) as e:
         raise ValueError(f"Can't read csv at {filepath} -> {e}")
     return df
 
@@ -52,5 +52,5 @@ def create_data_directory() -> None:
 
     :return: None
     """
-    Path("data/trade_history").mkdir(parents=True, exist_ok=True)
     Path("data/ohlc").mkdir(parents=True, exist_ok=True)
+    Path("data/trade_history").mkdir(parents=True, exist_ok=True)
