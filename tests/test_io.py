@@ -2,6 +2,7 @@ from krakenohlc import define_filepath, read_csv, create_data_directory
 import os
 import pandas as pd
 import pytest
+import shutil
 
 
 def test_define_filepath():
@@ -58,7 +59,6 @@ def test_read_csv(tmpdir):
 
 def test_create_data_directory(request):
     os.chdir(request.fspath.dirname)
-
     # Check directory creation
     create_data_directory()
     assert os.path.exists("data/ohlc") == 1
@@ -66,6 +66,5 @@ def test_create_data_directory(request):
 
     # Check no error when directories already exist
     create_data_directory()
-
+    shutil.rmtree("data")
     os.chdir(request.config.invocation_dir)
-    assert 1 == 1

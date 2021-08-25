@@ -171,7 +171,7 @@ class TestConfig:
         assert e_info_value == "Please provide pairs to download option."
 
     def test_get_configuration_pairs(self):
-        # Test no tradable pairs avalable for quote asset
+        # Test no tradable pairs available for quote asset
         with vcr.use_cassette(
             "tests/fixtures/vcr_cassettes/test_no_tradable_pairs" ".yaml"
         ):
