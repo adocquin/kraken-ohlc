@@ -53,7 +53,7 @@ class TestConfig:
         config = Config("tests/fixtures/config.yaml")
         assert type(config.start_datetime) == datetime.datetime
         assert config.start_datetime == datetime.datetime.strptime(
-            "2020-03-28 00:00:00", "%Y-%m-%d %H:%M:%S"
+            "2021-03-28 00:00:00", "%Y-%m-%d %H:%M:%S"
         )
         assert type(config.end_datetime) == datetime.datetime
         assert config.end_datetime == datetime.datetime.strptime(
@@ -74,7 +74,7 @@ class TestConfig:
         ]
         assert type(config.ka) == KrakenApi
         assert type(config.ohlc_frequencies) == list
-        assert config.ohlc_frequencies == ["1H", "4H", "1D"]
+        assert config.ohlc_frequencies == ["1H", "4H", "1D", "1M"]
 
         # Config with custom pairs
         config = self.__get_correct_config()
@@ -83,7 +83,7 @@ class TestConfig:
         with mock.patch("builtins.open", mock_file):
             config = Config("tests/fixtures/config.yaml")
         assert type(config.download_custom_pairs) == list
-        assert config.download_custom_pairs == ["XETHXXBT", "XBTUSDT"]
+        assert config.download_custom_pairs == ["GRTETH", "KEEPXBT"]
 
     def test_read_configuration_file(self):
         # Test raise FileNotFoundError.
@@ -97,7 +97,7 @@ class TestConfig:
     def test_check_configuration(self):
         # Test missing download start date.
         config_missing_api_public_key = self.correct_config.replace(
-            'download_start_date: "2020-03-28 00:00:00"',
+            'download_start_date: "2021-03-28 00:00:00"',
             "",
         )
         e_info_value = self.__mock_config_error(
@@ -106,8 +106,7 @@ class TestConfig:
         assert e_info_value == "Please provide a trades download start date."
         # Test missing download end date.
         config_missing_api_public_key = self.correct_config.replace(
-            'download_end_date: "2021-05-04 15:00:00"',
-            "",
+            'download_end_date: "2021-05-04 15:00:00"', ""
         )
         e_info_value = self.__mock_config_error(
             config_missing_api_public_key, ValueError
@@ -116,8 +115,8 @@ class TestConfig:
 
         # Test start date incorrectly formatted.
         config_bad_download_start_date = self.correct_config.replace(
-            'download_start_date: "2020-03-28 00:00:00"',
-            'download_start_date: "20-03-28 00:00:00"',
+            'download_start_date: "2021-03-28 00:00:00"',
+            'download_start_date: "21-03-28 00:00:00"',
         )
         e_info_value = self.__mock_config_error(
             config_bad_download_start_date, ValueError
@@ -135,7 +134,7 @@ class TestConfig:
 
         # Test missing OHLC frequency list
         config_missing_ohlc_frequencies = self.correct_config.replace(
-            "ohlc_frequencies:\n  - 1H\n  - 4H\n  - 1D", ""
+            "ohlc_frequencies:\n  - 1H\n  - 4H\n  - 1D\n  - 1M", ""
         )
         e_info_value = self.__mock_config_error(
             config_missing_ohlc_frequencies, ValueError
@@ -165,7 +164,7 @@ class TestConfig:
             "enabled: True", "enabled: False"
         )
         config_missing_pairs = config_missing_pairs.replace(
-            "download_custom_pairs:\n  - XETHXXBT\n  - XBTUSDT", ""
+            "download_custom_pairs:\n  - GRTETH\n  - KEEPXBT", ""
         )
         e_info_value = self.__mock_config_error(config_missing_pairs, ValueError)
         assert e_info_value == "Please provide pairs to download option."
@@ -187,7 +186,7 @@ class TestConfig:
                 "enabled: True", "enabled: False"
             )
             config_pair_not_available = config_pair_not_available.replace(
-                "download_custom_pairs:\n  - XETHXXBT\n  - XBTUSDT",
+                "download_custom_pairs:\n  - GRTETH\n  - KEEPXBT",
                 "download_custom_pairs:\n  - FAKE",
             )
             e_info_value = self.__mock_config_error(

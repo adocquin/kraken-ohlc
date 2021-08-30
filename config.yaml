@@ -1,5 +1,5 @@
 # Download trades from start date to end date in "YYYY-MM-DD HH:MI:Sec" format.
-download_start_date: "2020-03-28 00:00:00"
+download_start_date: "2021-03-28 00:00:00"
 download_end_date: "2021-05-04 15:00:00"
 
 # OHLCV frequencies to save.
@@ -9,6 +9,7 @@ ohlc_frequencies:
   - 1H
   - 4H
   - 1D
+  - 1M
 
 # Save trade history as csv.
 save_trade_history_as_csv: True
@@ -30,6 +31,5 @@ download_all_associated_pairs:
 # If download_all_associated_pairs is not enabled, download custom list of pairs.
 # List of available pairs: https://api.kraken.com/0/public/AssetPairs
 download_custom_pairs:
-  - XETHXXBT
-  - XBTUSDT
-
+  - GRTETH
+  - KEEPXBT
