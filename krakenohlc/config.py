@@ -76,6 +76,7 @@ class Config:
 
         :return: None
         """
+        current_datetime = datetime.datetime.utcnow()
         if not self.start_datetime:
             raise ValueError("Please provide a trades download start date.")
         if not self.end_datetime:
@@ -85,12 +86,16 @@ class Config:
             self.start_datetime = datetime.datetime.strptime(
                 self.start_datetime, "%Y-%m-%d %H:%M:%S"
             )
+            if self.start_datetime >= current_datetime:
+                raise ValueError("The start date must be in the past.")
         except ValueError as e:
             raise ValueError(f"Download start date incorrectly formatted: {e}")
         try:
             self.end_datetime = datetime.datetime.strptime(
                 self.end_datetime, "%Y-%m-%d %H:%M:%S"
             )
+            if self.end_datetime >= current_datetime:
+                self.end_datetime = current_datetime
         except ValueError as e:
             raise ValueError(f"Download end date incorrectly formatted: {e}")
 

@@ -87,7 +87,7 @@ docker pull futurbroke/kraken-ohlc:latest
 To start the container with restart as system reboot use:
 ```sh
 docker run -v CONFIGURATION_FILE_PATH:/app/config.yaml \
- -v DATA_FOLDER_PATH:/app/orders.csv \
+ -v DATA_FOLDER_PATH:/app/data \
  --name kraken-ohlc \
  --restart=on-failure futurbroke/kraken-ohlc
 ```

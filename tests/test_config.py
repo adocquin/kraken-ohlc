@@ -123,6 +123,15 @@ class TestConfig:
             config_bad_download_start_date, ValueError
         )
         assert "Download start date incorrectly formatted:" in e_info_value
+        config_bad_download_start_date = self.correct_config.replace(
+            'download_start_date: "2021-03-28 00:00:00"',
+            'download_start_date: "2121-03-28 00:00:00"',
+        )
+        e_info_value = self.__mock_config_error(
+            config_bad_download_start_date, ValueError
+        )
+        assert "The start date must be in the past." in e_info_value
+
         # Test end date incorrectly formatted.
         config_bad_download_end_date = self.correct_config.replace(
             'download_end_date: "2021-05-04 15:00:00"',
