@@ -47,6 +47,7 @@ class TestConfig:
             config = stream.read()
         assert config == self.correct_config
 
+    @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_config_init_properties.yaml")
     def test_config_init_properties(self):
         # Test object properties are correctly assigned.
         # Config with all associated pairs
@@ -74,7 +75,7 @@ class TestConfig:
         ]
         assert type(config.ka) == KrakenApi
         assert type(config.ohlc_frequencies) == list
-        assert config.ohlc_frequencies == ["1H", "4H", "1D", "1M"]
+        assert config.ohlc_frequencies == ["1T", "1H", "4H", "1D"]
 
         # Config with custom pairs
         config = self.__get_correct_config()
@@ -134,7 +135,7 @@ class TestConfig:
 
         # Test missing OHLC frequency list
         config_missing_ohlc_frequencies = self.correct_config.replace(
-            "ohlc_frequencies:\n  - 1H\n  - 4H\n  - 1D\n  - 1M", ""
+            "ohlc_frequencies:\n  - 1M\n  - 1H\n  - 4H\n  - 1D", ""
         )
         e_info_value = self.__mock_config_error(
             config_missing_ohlc_frequencies, ValueError
@@ -172,7 +173,7 @@ class TestConfig:
     def test_get_configuration_pairs(self):
         # Test no tradable pairs available for quote asset
         with vcr.use_cassette(
-            "tests/fixtures/vcr_cassettes/test_no_tradable_pairs" ".yaml"
+            "tests/fixtures/vcr_cassettes/test_no_tradable_pairs.yaml"
         ):
             with pytest.raises(ValueError) as e_info:
                 Config("tests/fixtures/config.yaml")
@@ -180,7 +181,7 @@ class TestConfig:
 
         # Test pair not available on Kraken
         with vcr.use_cassette(
-            "tests/fixtures/vcr_cassettes/test_pair_not_available" ".yaml"
+            "tests/fixtures/vcr_cassettes/test_pair_not_available.yaml"
         ):
             config_pair_not_available = self.correct_config.replace(
                 "enabled: True", "enabled: False"

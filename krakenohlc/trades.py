@@ -13,28 +13,7 @@ def datetime_as_utc_unix(date: datetime) -> int:
     return int(date.replace(tzinfo=timezone.utc).timestamp())
 
 
-def download_trades(
-    ka: KrakenApi, pair: str, start_datetime: datetime, end_datetime: datetime
-) -> pd.DataFrame:
-    """
-    Call KrakenAPI get_trades_history method to download trades for a specified
-    pair from start to end dates.
-
-    :param ka: KrakenAPI object.
-    :param pair: Pair to download trades history.
-    :param start_datetime: Trades start date as datetime.
-    :param end_datetime: Trades end date as datetime.
-    :return: Trade history as pandas DataFrame.
-    """
-    start_unix_time = datetime_as_utc_unix(start_datetime)
-    end_unix_time = datetime_as_utc_unix(end_datetime)
-    trades = ka.get_trades_history(pair, start_unix_time, end_unix_time, True)
-    df_trades = trades_as_df(trades)
-    df_trades = df_trades[df_trades.index < end_datetime]
-    return df_trades
-
-
-def trades_as_df(trades: list) -> pd.DataFrame:
+def trades_as_dataframe(trades: list) -> pd.DataFrame:
     """
     Convert Kraken api downloaded trades as pandas DataFrame.
     Is called by get_trades function.
@@ -59,3 +38,25 @@ def trades_as_df(trades: list) -> pd.DataFrame:
     df["time"] = pd.to_datetime(df["time"], unit="s")
     df.set_index(["time"], drop=True, inplace=True)
     return df
+
+
+def download_trades(
+    ka: KrakenApi, pair: str, start_datetime: datetime, end_datetime: datetime
+) -> pd.DataFrame:
+    """
+    Call KrakenAPI get_trades_history method to download trades for a specified
+    pair from start to end dates.
+
+    :param ka: KrakenAPI object.
+    :param pair: Pair to download trades history.
+    :param start_datetime: Trades start date as datetime.
+    :param end_datetime: Trades end date as datetime.
+    :return: Trade history as pandas DataFrame.
+    """
+    start_unix_time = datetime_as_utc_unix(start_datetime)
+    end_unix_time = datetime_as_utc_unix(end_datetime)
+    trades = ka.get_trades_history(pair, start_unix_time, end_unix_time, True)
+    df_trades = trades_as_dataframe(trades)
+    df_trades = df_trades[df_trades.index < end_datetime]
+    return df_trades
+

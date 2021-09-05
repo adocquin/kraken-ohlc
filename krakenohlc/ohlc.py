@@ -32,7 +32,7 @@ def pandas_to_kraken_ohlc_frequencies(ohlc_frequencies: list) -> list:
                 f"Unsupported frequency {frequency}. Supported "
                 f"frequencies: {supported_frequencies}"
             )
-        frequency.replace("M", "T").replace("1W", "1W-MON")
+        frequency = frequency.replace("M", "T").replace("1W", "1W-MON")
         frequencies.append(frequency)
     return frequencies
 
@@ -51,7 +51,7 @@ def check_trades_ohlc_start_end_dates(
     """
     try:
         correct_date = True if date == date.round(frequency) else False
-    except ValueError:  # Frequency = "1W"
+    except ValueError:  # Frequency = "1W-MON"
         day_of_week = 0 if start else 6
         correct_date = True if date.dayofweek == day_of_week else False
     return correct_date

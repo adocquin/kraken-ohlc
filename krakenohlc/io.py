@@ -21,6 +21,7 @@ def define_filepath(
     :param frequency: Frequency as string for OHLC data.
     :return: File path as string.
     """
+    frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
     path_start_date = str(start_datetime).replace(" ", "T").replace(":", "-")
     path_end_date = str(end_datetime).replace(" ", "T").replace(":", "-")
     if frequency:
@@ -46,11 +47,12 @@ def read_csv(filepath: str) -> pd.DataFrame:
     return df
 
 
-def create_data_directory() -> None:
+def create_data_directory(data_folder_path: str) -> None:
     """
     Create trades and OHLC data output directories.
 
+    :param data_folder_path: Data folder path as string.
     :return: None
     """
-    Path("data/ohlc").mkdir(parents=True, exist_ok=True)
-    Path("data/trade_history").mkdir(parents=True, exist_ok=True)
+    Path(f"{data_folder_path}/ohlc").mkdir(parents=True, exist_ok=True)
+    Path(f"{data_folder_path}/trade_history").mkdir(parents=True, exist_ok=True)

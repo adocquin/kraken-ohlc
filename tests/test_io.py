@@ -60,11 +60,11 @@ def test_read_csv(tmpdir):
 def test_create_data_directory(request):
     os.chdir(request.fspath.dirname)
     # Check directory creation
-    create_data_directory()
+    create_data_directory("data")
     assert os.path.exists("data/ohlc") == 1
     assert os.path.exists("data/trade_history") == 1
 
     # Check no error when directories already exist
-    create_data_directory()
+    create_data_directory("data")
     shutil.rmtree("data")
     os.chdir(request.config.invocation_dir)
