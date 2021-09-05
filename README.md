@@ -63,7 +63,7 @@ https://github.com/FuturBroke/kraken-ohlc/blob/main/config.yaml
   format.
 - **download_end_date**: Trades download end date, must be in *YYYY-MM-DD HH:MI:Sec*
   format.
-- **ohlc_frequencies**: List OHLC frequencies aggregate trades data. Support 
+- **ohlc_frequencies**: List OHLC frequencies aggregate trades data. Supported 
   frequencies are: *1M*, *3M*, *5M*, *15M*, *30M*, *1H*, *2H*, *4H*, *6H*, *8H*, *12H*,
   *1D*, *3D*, *1W*.
 - **save_trade_history**: *True* if you want to save downloaded trades as CSV in a 
