@@ -38,23 +38,24 @@ def pandas_to_kraken_ohlc_frequencies(ohlc_frequencies: list) -> list:
 
 
 def check_trades_ohlc_start_end_dates(
-    date: datetime, start: bool, frequency: str
+    config_date: pd.Timestamp, ohlc_date: pd.Timestamp, frequency: str
 ) -> bool:
     """
-    Check for a specified frequency if the passed datetime
+    Check for a specified frequency if the passed date
     is a correct start date or end date.
 
-    :param date: Date to check as datetime.
-    :param start: True if start date, false if end date.
+    :param config_date: Configuration start or end download date as Pandas Timestamp.
+    :param ohlc_date: OHLC date to check as Pandas Timestamp.
     :param frequency: Frequency to check date on.
     :return: True if correct date, False otherwise.
     """
-    try:
-        correct_date = True if date == date.round(frequency) else False
-    except ValueError:  # Frequency = "1W-MON"
-        day_of_week = 0 if start else 6
-        correct_date = True if date.dayofweek == day_of_week else False
-    return correct_date
+    if frequency == "1W-MON":
+        rounded_date = pd.to_datetime(config_date).to_period("W-SUN").start_time
+    else:
+        rounded_date = config_date.floor(freq=frequency)
+    if config_date != rounded_date and ohlc_date == rounded_date:
+        return False
+    return True
 
 
 def adjust_ohlc_frequency_dates(
@@ -75,26 +76,28 @@ def adjust_ohlc_frequency_dates(
     :param pair: OHLCV pair.
     :return: Frequency adjusted pandas DataFrame.
     """
-    start_datetime = pd.to_datetime(start_datetime)
-    correct_start_date = check_trades_ohlc_start_end_dates(
-        start_datetime, True, frequency
-    )
-    if not correct_start_date:
-        df = df[1:]
+    start_date = pd.Timestamp(start_datetime, tz=None)
+    end_date = pd.Timestamp(end_datetime, tz=None)
 
-    end_datetime = pd.to_datetime(end_datetime)
-    correct_end_date = check_trades_ohlc_start_end_dates(end_datetime, False, frequency)
-    if not correct_end_date:
-        df = df[:-1]
+    if not df.empty:
+        first_date = df.iloc[0].name
+        if not check_trades_ohlc_start_end_dates(
+            start_date, first_date, frequency
+        ):
+            df = df[1:]
+        last_date = df.iloc[-1].name
+        if not check_trades_ohlc_start_end_dates(
+            end_date, last_date, frequency
+        ):
+            df = df[:-1]
 
-    if not correct_start_date or not correct_end_date:
-        if df.empty:
-            print(f"{pair} {frequency}: Not enough data.")
-        else:
-            print(
-                f"{pair} {frequency}: Data truncated from {df.index[0]} to"
-                f" {df.index[-1]}."
-            )
+    if df.empty:
+        print(f"{pair} {frequency}: Not enough data.")
+    else:
+        frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
+        print(
+            f"{pair} {frequency}: OHLC data saved from {df.index[0]} to {df.index[-1]}."
+        )
     return df
 
 

@@ -78,10 +78,14 @@ class TestKrakrenOHLC:
             df_ohlc = pd.read_csv(
                 f"{TEST_DATA_PATH}/ohlc/GRTETH_2021-03-28T00-00-00_2021-05-04T15"
                 f"-00-00_{frequency}.csv"
+                , index_col="time"
+                , parse_dates=True
             )
             df_ohlc_test = pd.read_csv(
                 f"tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00"
                 f"-00_{frequency}.csv"
+                , index_col="time"
+                , parse_dates=True
             )
             assert df_ohlc.equals(df_ohlc_test)
 

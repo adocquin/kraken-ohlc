@@ -50,40 +50,78 @@ def test_pandas_to_kraken_ohlc_frequencies():
 
 
 def test_check_trades_ohlc_start_end_dates():
-    start_datetime = pd.to_datetime(
-        datetime.datetime.strptime("2021-03-28 00:00:00", "%Y-%m-%d %H:%M:%S")
-    )
-    end_datetime = pd.to_datetime(
-        datetime.datetime.strptime("2021-05-04 15:00:00", "%Y-%m-%d %H:%M:%S")
-    )
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "1T")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "1T")
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "3T")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "3T")
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "5T")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "5T")
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "15T")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "15T")
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "30T")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "30T")
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "1H")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "1H")
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "2H")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "2H") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "4H")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "4H") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "6H")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "6H") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "8H")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "8H") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "12H")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "12H") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "1D")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "1D") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "3D")
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "3D") is False
-    assert check_trades_ohlc_start_end_dates(start_datetime, True, "1W-MON") is False
-    assert check_trades_ohlc_start_end_dates(end_datetime, True, "1W-MON") is False
+    start_date = pd.to_datetime("2021-08-23 05:37:50", format="%Y-%m-%d %H:%M:%S")
+    end_date = pd.to_datetime("2021-09-06 13:10:23", format="%Y-%m-%d %H:%M:%S")
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:21:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "1T")
+    ohlc_date = pd.to_datetime("2021-09-06 13:06:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "1T")
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:21:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "3T")
+    ohlc_date = pd.to_datetime("2021-09-06 13:06:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "3T")
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:20:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "5T")
+    ohlc_date = pd.to_datetime("2021-09-06 13:05:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "5T")
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:15:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "15T")
+    ohlc_date = pd.to_datetime("2021-09-06 13:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "15T") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "30T")
+    ohlc_date = pd.to_datetime("2021-09-06 13:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "30T") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "1H")
+    ohlc_date = pd.to_datetime("2021-09-06 13:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "1H") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "2H")
+    ohlc_date = pd.to_datetime("2021-09-06 12:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "2H") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 04:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "4H") is False
+    ohlc_date = pd.to_datetime("2021-09-06 12:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "4H") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 06:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "6H")
+    ohlc_date = pd.to_datetime("2021-09-06 12:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "6H") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 00:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "8H") is False
+    ohlc_date = pd.to_datetime("2021-09-06 08:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "8H") is False
+
+    ohlc_date = pd.to_datetime("2021-09-06 13:06:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "12H")
+    ohlc_date = pd.to_datetime("2021-09-06 13:06:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "12H")
+
+    ohlc_date = pd.to_datetime("2021-08-23 00:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "1D") is False
+    ohlc_date = pd.to_datetime("2021-09-06 12:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "1D")
+
+    ohlc_date = pd.to_datetime("2021-08-23 00:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "3D")
+    ohlc_date = pd.to_datetime("2021-09-06 00:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "3D") is False
+
+    ohlc_date = pd.to_datetime("2021-08-23 00:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(start_date, ohlc_date, "1W-MON") is False
+    ohlc_date = pd.to_datetime("2021-09-06 00:00:00", format="%Y-%m-%d %H:%M:%S")
+    assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "1W-MON") is False
 
 
 def test_adjust_ohlc_frequency_dates(capfd):
@@ -96,28 +134,30 @@ def test_adjust_ohlc_frequency_dates(capfd):
     )
     df_ohlc_not_adjusted = pd.read_csv(
         "tests/fixtures/tests_data/"
-        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1W_not_adjusted.csv"
+        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1W_not_adjusted.csv",
+        index_col="time",
+        parse_dates=True
     )
     df_ohlc = adjust_ohlc_frequency_dates(start_datetime,
                                           end_datetime,
                                           "1W-MON",
                                           df_ohlc_not_adjusted,
                                           "GRTETH")
-    df_ohlc.reset_index(drop=True, inplace=True)
     df_ohlc_test = pd.read_csv(
         "tests/fixtures/tests_data/"
-        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1W.csv"
+        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1W.csv",
+        index_col="time",
+        parse_dates=True
     )
     assert df_ohlc.equals(df_ohlc_test)
 
     # Test with empty adjusted DataFrame on 1W frequency
-    df_ohlc_not_adjusted = df_ohlc_not_adjusted.iloc[[0, -1]].reset_index(drop=True)
     capfd.readouterr()
-    df_ohlc = adjust_ohlc_frequency_dates(start_datetime,
-                                          end_datetime,
-                                          "1W-MON",
-                                          df_ohlc_not_adjusted,
-                                          "GRTETH")
+    adjust_ohlc_frequency_dates(start_datetime,
+                                end_datetime,
+                                "1W-MON",
+                                pd.DataFrame(),
+                                "GRTETH")
     captured = capfd.readouterr()
     test_output = "GRTETH 1W-MON: Not enough data.\n"
     assert captured.out == test_output
@@ -125,17 +165,20 @@ def test_adjust_ohlc_frequency_dates(capfd):
     # Test without adjusted dates on 1H frequency
     df_ohlc_not_adjusted = pd.read_csv(
         "tests/fixtures/tests_data/"
-        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1H.csv"
+        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1H.csv",
+        index_col="time",
+        parse_dates=True
     )
     df_ohlc = adjust_ohlc_frequency_dates(start_datetime,
                                           end_datetime,
                                           "1H",
                                           df_ohlc_not_adjusted,
                                           "GRTETH")
-    df_ohlc.reset_index(drop=True, inplace=True)
     df_ohlc_test = pd.read_csv(
         "tests/fixtures/tests_data/"
-        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1H.csv"
+        "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1H.csv",
+        index_col="time",
+        parse_dates=True
     )
     assert df_ohlc.equals(df_ohlc_test)
 

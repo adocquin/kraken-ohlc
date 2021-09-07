@@ -39,7 +39,7 @@ def read_csv(filepath: str) -> pd.DataFrame:
     :return: CSV as pandas DataFrame.
     """
     try:
-        df = pd.read_csv(filepath, index_col="time", parse_dates=["time"])
+        df = pd.read_csv(filepath, index_col="time", parse_dates=True)
     except (FileNotFoundError, pd.errors.EmptyDataError):
         df = pd.DataFrame()
     except (ValueError, pd.errors.ParserError, IsADirectoryError) as e:
