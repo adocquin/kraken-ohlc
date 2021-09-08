@@ -19,7 +19,8 @@ save_trade_history_as_csv: True
 download_all_associated_pairs:
   enabled: True
   quote_assets:
-    - XBT
+    - XXBT
+    - USDT
   excluded_base_assets:
     - .d
     - ZCAD

@@ -130,16 +130,17 @@ class Config:
                         f"No tradable pairs available on Kraken for {quote_asset}."
                     )
             # Remove excluded base assets
-            self.pairs = [
-                pair
-                for pair in self.pairs
-                if not any(
-                    base_asset in pair
-                    for base_asset in self.download_all_associated_pairs.get(
-                        "excluded_base_assets"
+            if self.download_all_associated_pairs.get("excluded_base_assets"):
+                self.pairs = [
+                    pair
+                    for pair in self.pairs
+                    if not any(
+                        base_asset in pair
+                        for base_asset in self.download_all_associated_pairs.get(
+                            "excluded_base_assets"
+                        )
                     )
-                )
-            ]
+                ]
         else:
             for pair in self.download_custom_pairs:
                 if pair not in asset_pairs:

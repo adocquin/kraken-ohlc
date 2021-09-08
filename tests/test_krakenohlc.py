@@ -31,7 +31,7 @@ class TestKrakrenOHLC:
     pair: str = "GRTETH"
     df_trades = pd.DataFrame
 
-    @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_handle_pair_trades.yaml")
+    @vcr.use_cassette("tests/fixtures/vcr_cassettes/krakenohlc_setup.yaml")
     def setup(self):
         # Config object creation
         self.config = Config("tests/fixtures/config.yaml")
@@ -138,5 +138,5 @@ class TestKrakrenOHLC:
         ) as mock_fake_handle_pair_frequency_ohlc:
             kraken_ohlc(TEST_DATA_PATH)
             mock_create_data_directory.assert_called_once_with(TEST_DATA_PATH)
-            assert mock_handle_pair_trades.call_count == 73
-            assert mock_fake_handle_pair_frequency_ohlc.call_count == 292
+            assert mock_handle_pair_trades.call_count == 91
+            assert mock_fake_handle_pair_frequency_ohlc.call_count == 364

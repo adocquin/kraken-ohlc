@@ -64,7 +64,8 @@ class TestConfig:
         assert config.save_trade_history_as_csv is True
         assert type(config.download_all_associated_pairs) == dict
         assert config.download_all_associated_pairs.get("enabled") is True
-        assert config.download_all_associated_pairs.get("quote_assets") == ["XBT"]
+        assert config.download_all_associated_pairs.get("quote_assets") == ["XXBT",
+                                                                            "USDT"]
         assert config.download_all_associated_pairs.get("excluded_base_assets") == [
             ".d",
             "ZCAD",
@@ -164,7 +165,7 @@ class TestConfig:
 
         # Test missing quote assets to download
         config_missing_quote_assets = self.correct_config.replace(
-            "  quote_assets:\n    - XBT", ""
+            "  quote_assets:\n    - XXBT\n    - USDT", ""
         )
         e_info_value = self.__mock_config_error(config_missing_quote_assets, ValueError)
         assert e_info_value == "Please provide quotes assets to download."
