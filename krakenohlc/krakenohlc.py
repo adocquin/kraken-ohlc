@@ -53,12 +53,17 @@ def handle_pair_frequency_ohlc(
     :return: None
     """
     ohlc_filepath = define_filepath(
-        "ohlc", pair, config.start_datetime, config.end_datetime, frequency
+        "ohlc",
+        pair,
+        config.start_datetime,
+        config.end_datetime,
+        frequency,
+        config.volume_in_quote_asset,
     )
     df_ohlc = read_csv(data_folder_path + "/" + ohlc_filepath)
     if df_ohlc.empty:
         # Convert trade history to ohlc for specified frequency
-        df_ohlc = trades_to_ohlc(df_trades, frequency)
+        df_ohlc = trades_to_ohlc(df_trades, frequency, config.volume_in_quote_asset)
         df_ohlc = adjust_ohlc_frequency_dates(
             config.start_datetime, config.end_datetime, frequency, df_ohlc, pair
         )
@@ -84,8 +89,6 @@ def kraken_ohlc(data_folder_path: str) -> None:
     for pair in config.pairs:
         df_trades = handle_pair_trades(pair, config, data_folder_path)
         for frequency in config.ohlc_frequencies:
-            handle_pair_frequency_ohlc(pair,
-                                       config,
-                                       df_trades,
-                                       frequency,
-                                       data_folder_path)
+            handle_pair_frequency_ohlc(
+                pair, config, df_trades, frequency, data_folder_path
+            )

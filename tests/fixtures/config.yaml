@@ -11,6 +11,10 @@ ohlc_frequencies:
   - 4H
   - 1D
 
+# If true, compute volume in quote asset instead of base asset and add "_quote" at the
+# end of the OHLC file name.
+volume_in_quote_asset: False
+
 # Save trade history as csv.
 save_trade_history_as_csv: True
 

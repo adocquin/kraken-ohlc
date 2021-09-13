@@ -6,10 +6,19 @@ import shutil
 
 
 def test_define_filepath():
-    # Assert filepath generation for OHLC data
+    # Assert filepath generation for OHLC data with volume in base asset
     correct_filepath = "ohlc/AAVEXBT_2020-03-28T00-00-00_2021-05-04T15-00-00_4H.csv"
     filepath = define_filepath(
         "ohlc", "AAVEXBT", "2020-03-28 00:00:00", "2021-05-04 " "15:00:00", "4H"
+    )
+    assert filepath == correct_filepath
+
+    # Assert filepath generation for OHLC data with volume in quote asset
+    correct_filepath = (
+        "ohlc/AAVEXBT_2020-03-28T00-00-00_2021-05-04T15-00-00_4H_quote.csv"
+    )
+    filepath = define_filepath(
+        "ohlc", "AAVEXBT", "2020-03-28 00:00:00", "2021-05-04 " "15:00:00", "4H", True
     )
     assert filepath == correct_filepath
 
