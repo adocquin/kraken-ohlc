@@ -189,11 +189,24 @@ def test_trades_to_ohlc():
         index_col="time",
         parse_dates=True
     )
-    df_ohlc = trades_to_ohlc(df_trades, "1W-MON")
+    # Test with volume in base asset.
+    df_ohlc = trades_to_ohlc(df_trades, "1W-MON", False)
     df_ohlc_test = pd.read_csv(
         "tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00"
-        "-00_1W_not_adjusted"
-        ".csv",
+        "-00_1W_not_adjusted.csv",
+        index_col="time",
+        parse_dates=True
+    )
+    df_ohlc_test.index.freq = "W-MON"
+    df_ohlc['volume'] = df_ohlc['volume'].apply(lambda x: int(100 * x))
+    df_ohlc_test['volume'] = df_ohlc_test['volume'].apply(lambda x: int(100 * x))
+    assert df_ohlc.equals(df_ohlc_test)
+
+    # Test with volume in quote asset
+    df_ohlc = trades_to_ohlc(df_trades, "1W-MON", True)
+    df_ohlc_test = pd.read_csv(
+        "tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00"
+        "-00_1W_not_adjusted_quote.csv",
         index_col="time",
         parse_dates=True
     )

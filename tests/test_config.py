@@ -105,7 +105,7 @@ class TestConfig:
         e_info_value = self.__mock_config_error(
             config_missing_api_public_key, ValueError
         )
-        assert e_info_value == "Please provide a trades download start date."
+        assert "Please provide a trades download start date." in e_info_value
         # Test missing download end date.
         config_missing_api_public_key = self.correct_config.replace(
             'download_end_date: "2021-05-04 15:00:00"', ""
@@ -113,7 +113,7 @@ class TestConfig:
         e_info_value = self.__mock_config_error(
             config_missing_api_public_key, ValueError
         )
-        assert e_info_value == "Please provide a trades download end date."
+        assert "Please provide a trades download end date." in e_info_value
 
         # Test start date incorrectly formatted.
         config_bad_download_start_date = self.correct_config.replace(
@@ -150,7 +150,19 @@ class TestConfig:
         e_info_value = self.__mock_config_error(
             config_missing_ohlc_frequencies, ValueError
         )
-        assert e_info_value == "Please provide ohlcv frequencies."
+        assert "Please provide ohlcv frequencies." in e_info_value
+
+        # Test missing volume in quote asset
+        config_missing_save_trade_history = self.correct_config.replace(
+            "volume_in_quote_asset: False", ""
+        )
+        e_info_value = self.__mock_config_error(
+            config_missing_save_trade_history, ValueError
+        )
+        assert (
+            "Please provide volume_in_quote_asset value "
+            "(True or False)." in e_info_value
+        )
 
         # Test missing save trade history as csv
         config_missing_save_trade_history = self.correct_config.replace(
@@ -160,7 +172,7 @@ class TestConfig:
             config_missing_save_trade_history, ValueError
         )
         assert (
-            e_info_value == "Please provide save_trade_history value (True or False)."
+            "Please provide save_trade_history value (True or False)." in e_info_value
         )
 
         # Test missing quote assets to download
@@ -168,7 +180,7 @@ class TestConfig:
             "  quote_assets:\n    - XXBT\n    - USDT", ""
         )
         e_info_value = self.__mock_config_error(config_missing_quote_assets, ValueError)
-        assert e_info_value == "Please provide quotes assets to download."
+        assert "Please provide quotes assets to download." in e_info_value
 
         # Test missing pairs to download option
         config_missing_pairs = self.correct_config.replace(
@@ -178,7 +190,7 @@ class TestConfig:
             "download_custom_pairs:\n  - GRTETH\n  - KEEPXBT", ""
         )
         e_info_value = self.__mock_config_error(config_missing_pairs, ValueError)
-        assert e_info_value == "Please provide pairs to download option."
+        assert "Please provide pairs to download option." in e_info_value
 
     def test_get_configuration_pairs(self):
         # Test no tradable pairs available for quote asset
@@ -204,4 +216,3 @@ class TestConfig:
                 config_pair_not_available, ValueError
             )
             assert e_info_value == "FAKE pair not available on Kraken."
-

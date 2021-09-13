@@ -9,6 +9,7 @@ def define_filepath(
     start_datetime: datetime,
     end_datetime: datetime,
     frequency: str = "",
+    volume_in_quote_asset: bool = None,
 ) -> str:
     """
     Generate file path to read and save files for specified folder name, pair,
@@ -19,15 +20,18 @@ def define_filepath(
     :param start_datetime: Start date as datetime.
     :param end_datetime: End date as datetime.
     :param frequency: Frequency as string for OHLC data.
+    :param volume_in_quote_asset: If volume is aggregated in quote asset or not.
     :return: File path as string.
     """
     frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
     path_start_date = str(start_datetime).replace(" ", "T").replace(":", "-")
     path_end_date = str(end_datetime).replace(" ", "T").replace(":", "-")
+    filepath = f"{folder}/{pair}_{path_start_date}_{path_end_date}"
     if frequency:
-        filepath = f"{folder}/{pair}_{path_start_date}_{path_end_date}_{frequency}.csv"
-    else:
-        filepath = f"{folder}/{pair}_{path_start_date}_{path_end_date}.csv"
+        filepath += f"_{frequency}"
+    if volume_in_quote_asset is True:
+        filepath += "_quote"
+    filepath += ".csv"
     return filepath
 
 

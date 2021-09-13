@@ -24,6 +24,10 @@ data
 For specified pairs and frequencies in configuration files, OHLC dataframes will be 
 created and saved as CSV in **ohlc** folder.<br>
 OHLC are saved with name *PAIR_DOWNLOAD_START_DATE_DOWNLOAD_END_DATE_FREQUENCY.csv*.<br>
+By default the volume is aggregated by the base asset, if you want to aggregate it 
+with the quote asset set *volume_in_quote_asset* to *True* in configuration file.
+OHLC will then by savec in *PAIR_DOWNLOAD_START_DATE_DOWNLOAD_END_DATE_FREQUENCY_quote.
+csv* format.
 Dates are in *YYYY-MM-DDTHH-MI-Sec* format.
 
 If OHLC file for specific configuration already exist, it will not be generated again.
@@ -66,6 +70,8 @@ https://github.com/FuturBroke/kraken-ohlc/blob/main/config.yaml
 - **ohlc_frequencies**: List OHLC frequencies aggregate trades data. Supported 
   frequencies are: *1M*, *3M*, *5M*, *15M*, *30M*, *1H*, *2H*, *4H*, *6H*, *8H*, *12H*,
   *1D*, *3D*, *1W*.
+- **volume_in_quote_asset**: true if you want to aggregate the volume by the quote 
+  asset.
 - **save_trade_history**: *True* if you want to save downloaded trades as CSV in a 
   *trade_history* folder, *False* otherwise.
   

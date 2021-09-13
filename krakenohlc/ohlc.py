@@ -71,7 +71,7 @@ def adjust_ohlc_frequency_dates(
 
     :param start_datetime: Data start date as datetime object.
     :param end_datetime: Data end date as datetime object.
-    :param frequency: Frequency or period in string.
+    :param frequency: Frequency or period in String.
     :param df: OHLCV pandas DataFrame.
     :param pair: OHLCV pair.
     :return: Frequency adjusted pandas DataFrame.
@@ -81,14 +81,10 @@ def adjust_ohlc_frequency_dates(
 
     if not df.empty:
         first_date = df.iloc[0].name
-        if not check_trades_ohlc_start_end_dates(
-            start_date, first_date, frequency
-        ):
+        if not check_trades_ohlc_start_end_dates(start_date, first_date, frequency):
             df = df[1:]
         last_date = df.iloc[-1].name
-        if not check_trades_ohlc_start_end_dates(
-            end_date, last_date, frequency
-        ):
+        if not check_trades_ohlc_start_end_dates(end_date, last_date, frequency):
             df = df[:-1]
 
     if df.empty:
@@ -101,17 +97,27 @@ def adjust_ohlc_frequency_dates(
     return df
 
 
-def trades_to_ohlc(df_trades: pd.DataFrame, frequency: str) -> pd.DataFrame:
+def trades_to_ohlc(
+    df_trades: pd.DataFrame, frequency: str, volume_in_quote_asset: bool
+) -> pd.DataFrame:
     """
     Resamples the trades pandas DataFrame to an OHLCV DataFrame in specified timeline.
 
     :param df_trades: Trades pandas DataFrame.
-    :param frequency:  Frequency to resample in string.
+    :param frequency:  Frequency to resample in String.
+    :param volume_in_quote_asset:  If volume is aggregated in quote asset or not.
     :return: OHLC DataFrame in specified frequency.
     """
-    df_ohlc = df_trades.resample(
-        frequency, closed="left", label="left", origin="epoch"
-    ).agg({"price": "ohlc", "volume": "sum"})
+    if volume_in_quote_asset:
+        df_trades["volume_quote"] = df_trades["price"]*df_trades["volume"]
+        df_ohlc = df_trades.resample(
+            frequency, closed="left", label="left", origin="epoch"
+        ).agg({"price": "ohlc", "volume_quote": "sum"})
+        df_ohlc.rename(columns={"volume_quote": "volume"}, inplace=True)
+    else:
+        df_ohlc = df_trades.resample(
+            frequency, closed="left", label="left", origin="epoch"
+        ).agg({"price": "ohlc", "volume": "sum"})
     # Remove multi-indexed columns
     df_ohlc.columns = [i[1] for i in df_ohlc.columns]
     return df_ohlc
