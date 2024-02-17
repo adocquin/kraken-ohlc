@@ -1,8 +1,9 @@
 import pandas as pd
+
 from .config import Config
-from .ohlc import trades_to_ohlc, adjust_ohlc_frequency_dates
-from .trades import download_trades
 from .io import create_data_directory, define_filepath, read_csv
+from .ohlc import adjust_ohlc_frequency_dates, trades_to_ohlc
+from .trades import download_trades
 
 
 def handle_pair_trades(

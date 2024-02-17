@@ -1,21 +1,31 @@
-FROM python:3.8-slim-buster
+# Stage 1: Build and compile environment
+FROM python:3.12.2-alpine AS compile-image
 
-# Install cron
-RUN apt-get update && apt-get -y install cron
+# Setup a virtual environment to isolate our package dependencies locally
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Set /app as working directory
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Stage 2: Final image build
+FROM python:3.12.2-alpine
+
+# Copy virtual environment from the build stage
+COPY --from=compile-image /opt/venv /opt/venv
+
+# Setup environment variable to ensure scripts run in virtual environment
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Add a non-root user for running the application
+RUN adduser -D appuser
+USER appuser
 WORKDIR /app
 
-# Copy and install Python requirements
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
-
 # Copy application files
-COPY krakenohlc/ krakenohlc/
-COPY config.yaml config.yaml
-COPY __main__.py __main__.py
+COPY --chown=appuser:appuser krakenohlc/ krakenohlc/
+COPY --chown=appuser:appuser __main__.py .
 
-# Create data output folder
-RUN mkdir -p /app/data
-
-CMD ["python3", "-u", "__main__.py"]
+# Run the application
+CMD ["python", "-u", "__main__.py"]

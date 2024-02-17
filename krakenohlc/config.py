@@ -1,20 +1,11 @@
-import yaml
 import datetime
-from typing import TypedDict
+
+import yaml
 from krakenapi import KrakenApi
+
 from .ohlc import pandas_to_kraken_ohlc_frequencies
 
-CONFIG_ERROR_MSG: str = "Configuration file incorrectly formatted"
-
-
-class DownloadAllAssociatedPairs(TypedDict):
-    """
-    download_all_associated_pairs config option dictionary hint typing.
-    """
-
-    enabled: bool
-    quote_assets: list
-    excluded_base_assets: list
+ERROR_PREFIX: str = "Configuration file incorrectly formatted:"
 
 
 class Config:
@@ -26,7 +17,7 @@ class Config:
     end_datetime = datetime.datetime
     volume_in_quote_asset: bool
     save_trade_history_as_csv: bool
-    download_all_associated_pairs: DownloadAllAssociatedPairs
+    download_all_associated_pairs: dict
     download_custom_pairs: list
     ka: KrakenApi
     pairs: list
@@ -60,17 +51,14 @@ class Config:
                     self.save_trade_history_as_csv = config.get(
                         "save_trade_history_as_csv"
                     )
-                    self.volume_in_quote_asset = config.get(
-                        "volume_in_quote_asset"
-                    )
+                    self.volume_in_quote_asset = config.get("volume_in_quote_asset")
                     self.download_all_associated_pairs = config.get(
                         "download_all_associated_pairs"
                     )
-                    if not self.download_all_associated_pairs.get("enabled"):
-                        self.download_custom_pairs = config.get("download_custom_pairs")
+                    self.download_custom_pairs = config.get("download_custom_pairs")
                     self.ohlc_frequencies = config.get("ohlc_frequencies")
                 except (AttributeError, yaml.YAMLError) as e:
-                    raise AttributeError(CONFIG_ERROR_MSG + f": {e}")
+                    raise AttributeError(ERROR_PREFIX + f": {e}")
         except EnvironmentError:
             raise FileNotFoundError("Configuration file not found.")
 
@@ -80,43 +68,64 @@ class Config:
 
         :return: None
         """
-        current_datetime = datetime.datetime.utcnow()
+        current_datetime = datetime.datetime.now(datetime.timezone.utc).replace(
+            tzinfo=None
+        )
+
+        # Validate start and end datetimes
+        if not self.start_datetime:
+            raise ValueError(
+                f"{ERROR_PREFIX} Please provide a trades download start date."
+            )
+        if not self.end_datetime:
+            raise ValueError(
+                f"{ERROR_PREFIX} Please provide a trades download end date."
+            )
+
+        # Parse and validate start datetime
         try:
-            if not self.start_datetime:
-                raise ValueError("Please provide a trades download start date.")
-            if not self.end_datetime:
-                raise ValueError("Please provide a trades download end date.")
-            try:
-                self.start_datetime = datetime.datetime.strptime(
-                    self.start_datetime, "%Y-%m-%d %H:%M:%S"
-                )
-                if self.start_datetime >= current_datetime:
-                    raise ValueError("The start date must be in the past.")
-            except ValueError as e:
-                raise ValueError(f"Download start date incorrectly formatted: {e}")
-            try:
-                self.end_datetime = datetime.datetime.strptime(
-                    self.end_datetime, "%Y-%m-%d %H:%M:%S"
-                )
-                if self.end_datetime >= current_datetime:
-                    self.end_datetime = current_datetime
-            except ValueError as e:
-                raise ValueError(f"Download end date incorrectly formatted: {e}")
-            if self.ohlc_frequencies is None:
-                raise ValueError("Please provide ohlcv frequencies.")
-            if self.volume_in_quote_asset is None:
-                raise ValueError("Please provide volume_in_quote_asset value "
-                                 "(True or False).")
-            if not self.save_trade_history_as_csv:
-                raise ValueError("Please provide save_trade_history value "
-                                 "(True or False).")
-            if self.download_all_associated_pairs.get("enabled"):
-                if not self.download_all_associated_pairs.get("quote_assets"):
-                    raise ValueError("Please provide quotes assets to download.")
-            elif not self.download_custom_pairs:
-                raise ValueError("Please provide pairs to download option.")
+            self.start_datetime = datetime.datetime.strptime(
+                self.start_datetime, "%Y-%m-%d %H:%M:%S"
+            )
+            if self.start_datetime >= current_datetime:
+                raise ValueError(f"{ERROR_PREFIX} The start date must be in the past.")
         except ValueError as e:
-            raise ValueError(CONFIG_ERROR_MSG + f": {e}")
+            raise ValueError(
+                f"{ERROR_PREFIX} Download start date incorrectly formatted: {e}"
+            )
+
+        # Parse and validate end datetime
+        try:
+            self.end_datetime = datetime.datetime.strptime(
+                self.end_datetime, "%Y-%m-%d %H:%M:%S"
+            )
+            if self.end_datetime >= current_datetime:
+                self.end_datetime = current_datetime
+        except ValueError as e:
+            raise ValueError(
+                f"{ERROR_PREFIX} Download end date incorrectly formatted: {e}"
+            )
+        if self.ohlc_frequencies is None:
+            raise ValueError(f"{ERROR_PREFIX} Please provide ohlc frequencies.")
+        if self.volume_in_quote_asset is None:
+            raise ValueError(
+                f"{ERROR_PREFIX} Please provide volume_in_quote_asset value "
+                "(True or False)."
+            )
+        # Check other configurations
+        if not self.save_trade_history_as_csv:
+            raise ValueError(
+                f"{ERROR_PREFIX} Please provide save_trade_history value "
+                "(True or False)."
+            )
+        if self.download_all_associated_pairs.get(
+            "enabled"
+        ) and not self.download_all_associated_pairs.get("quote_assets"):
+            raise ValueError(
+                f"{ERROR_PREFIX} Please provide quotes assets to download."
+            )
+        elif not self.download_custom_pairs:
+            raise ValueError(f"{ERROR_PREFIX} Please provide pairs to download option.")
 
     def __get_configuration_pairs(self) -> None:
         """
@@ -153,3 +162,4 @@ class Config:
                 if pair not in asset_pairs:
                     raise ValueError(f"{pair} pair not available on Kraken.")
             self.pairs = self.download_custom_pairs
+        print(f"Pairs to download: {self.pairs}")

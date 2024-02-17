@@ -1,6 +1,9 @@
-from pathlib import Path
 import datetime
+from pathlib import Path
+
 import pandas as pd
+
+from .ohlc import FREQUENCIES_REPLACE
 
 
 def define_filepath(
@@ -28,6 +31,8 @@ def define_filepath(
     path_end_date = str(end_datetime).replace(" ", "T").replace(":", "-")
     filepath = f"{folder}/{pair}_{path_start_date}_{path_end_date}"
     if frequency:
+        for i in FREQUENCIES_REPLACE:
+            frequency = frequency.replace(FREQUENCIES_REPLACE[i], i)
         filepath += f"_{frequency}"
     if volume_in_quote_asset is True:
         filepath += "_quote"

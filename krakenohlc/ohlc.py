@@ -1,5 +1,12 @@
 import datetime
+
 import pandas as pd
+
+FREQUENCIES_REPLACE: dict[str, str] = {
+    "M": "min",
+    "1W": "1W-MON",
+    "H": "h",
+}
 
 
 def pandas_to_kraken_ohlc_frequencies(ohlc_frequencies: list) -> list:
@@ -32,7 +39,8 @@ def pandas_to_kraken_ohlc_frequencies(ohlc_frequencies: list) -> list:
                 f"Unsupported frequency {frequency}. Supported "
                 f"frequencies: {supported_frequencies}"
             )
-        frequency = frequency.replace("M", "T").replace("1W", "1W-MON")
+        for i in FREQUENCIES_REPLACE:
+            frequency = frequency.replace(i, FREQUENCIES_REPLACE[i])
         frequencies.append(frequency)
     return frequencies
 
@@ -109,7 +117,7 @@ def trades_to_ohlc(
     :return: OHLC DataFrame in specified frequency.
     """
     if volume_in_quote_asset:
-        df_trades["volume_quote"] = df_trades["price"]*df_trades["volume"]
+        df_trades["volume_quote"] = df_trades["price"] * df_trades["volume"]
         df_ohlc = df_trades.resample(
             frequency, closed="left", label="left", origin="epoch"
         ).agg({"price": "ohlc", "volume_quote": "sum"})
