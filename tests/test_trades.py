@@ -1,9 +1,12 @@
 import datetime
-import vcr
 import json
+
 import pandas as pd
+import vcr
 from krakenapi import KrakenApi
-from krakenohlc import datetime_as_utc_unix, trades_as_dataframe, download_trades
+
+from krakenohlc import (datetime_as_utc_unix, download_trades,
+                        trades_as_dataframe)
 
 
 def test_datetime_as_utc_unix():
@@ -14,16 +17,14 @@ def test_datetime_as_utc_unix():
 
 
 def test_trades_as_dataframe():
-    with open("tests/fixtures/tests_data/trades.json", 'r') as f:
+    with open("tests/fixtures/tests_data/trades.json", "r") as f:
         trades = json.load(f)
-    df_trades_test = pd.read_csv(
-        "tests/fixtures/tests_data/trades.csv",
-        index_col="time",
-        parse_dates=True
-    )
     df_trades = trades_as_dataframe(trades)
-    df_trades_test["miscellaneous"].fillna('', inplace=True)
-    assert df_trades.equals(df_trades_test)
+    df_trades_test = pd.read_csv(
+        "tests/fixtures/tests_data/trades.csv", index_col="time", parse_dates=True
+    )
+    df_trades_test["miscellaneous"].fillna("", inplace=True)
+    pd.testing.assert_frame_equal(df_trades, df_trades_test)
 
 
 @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_download_trades.yaml")
@@ -36,8 +37,7 @@ def test_download_trades():
     df_trades_test = pd.read_csv(
         "tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
-    df_trades_test["miscellaneous"].fillna('', inplace=True)
-    assert df_trades.equals(df_trades_test)
-
+    df_trades_test["miscellaneous"].fillna("", inplace=True)
+    pd.testing.assert_frame_equal(df_trades, df_trades_test)

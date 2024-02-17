@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+
 import pandas as pd
 from krakenapi import KrakenApi
 
@@ -21,6 +22,10 @@ def trades_as_dataframe(trades: list) -> pd.DataFrame:
     :param trades: Downloaded data from kraken api as dictionary.
     :return: Pandas DataFrame of trades data.
     """
+    # Trade id was added to the response since the first version of the
+    # API. We remove it to keep compatibility. See:
+    # https://docs.kraken.com/rest/#tag/Market-Data/operation/getRecentTrades
+    trades = [i[:6] for i in trades]
     df = pd.DataFrame(
         data=trades,
         columns=[
@@ -35,7 +40,7 @@ def trades_as_dataframe(trades: list) -> pd.DataFrame:
     df["price"] = df["price"].astype(float)
     df["volume"] = df["volume"].astype(float)
     # Set time as index
-    df["time"] = pd.to_datetime(df["time"], unit="s")
+    df["time"] = pd.to_datetime(df["time"], unit="s").dt.round("us")
     df.set_index(["time"], drop=True, inplace=True)
     return df
 
@@ -59,4 +64,3 @@ def download_trades(
     df_trades = trades_as_dataframe(trades)
     df_trades = df_trades[df_trades.index < end_datetime]
     return df_trades
-

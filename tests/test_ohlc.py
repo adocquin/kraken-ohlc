@@ -1,12 +1,11 @@
-import pytest
 import datetime
+
 import pandas as pd
-from krakenohlc import (
-    pandas_to_kraken_ohlc_frequencies,
-    check_trades_ohlc_start_end_dates,
-    adjust_ohlc_frequency_dates,
-    trades_to_ohlc,
-)
+import pytest
+
+from krakenohlc import (adjust_ohlc_frequency_dates,
+                        check_trades_ohlc_start_end_dates,
+                        pandas_to_kraken_ohlc_frequencies, trades_to_ohlc)
 
 
 def test_pandas_to_kraken_ohlc_frequencies():
@@ -27,17 +26,17 @@ def test_pandas_to_kraken_ohlc_frequencies():
         "1W",
     ]
     frequencies_test = [
-        "1T",
-        "3T",
-        "5T",
-        "15T",
-        "30T",
-        "1H",
-        "2H",
-        "4H",
-        "6H",
-        "8H",
-        "12H",
+        "1min",
+        "3min",
+        "5min",
+        "15min",
+        "30min",
+        "1h",
+        "2h",
+        "4h",
+        "6h",
+        "8h",
+        "12h",
         "1D",
         "3D",
         "1W-MON",
@@ -136,28 +135,24 @@ def test_adjust_ohlc_frequency_dates(capfd):
         "tests/fixtures/tests_data/"
         "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1W_not_adjusted.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
-    df_ohlc = adjust_ohlc_frequency_dates(start_datetime,
-                                          end_datetime,
-                                          "1W-MON",
-                                          df_ohlc_not_adjusted,
-                                          "GRTETH")
+    df_ohlc = adjust_ohlc_frequency_dates(
+        start_datetime, end_datetime, "1W-MON", df_ohlc_not_adjusted, "GRTETH"
+    )
     df_ohlc_test = pd.read_csv(
         "tests/fixtures/tests_data/"
         "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1W.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
     assert df_ohlc.equals(df_ohlc_test)
 
     # Test with empty adjusted DataFrame on 1W frequency
     capfd.readouterr()
-    adjust_ohlc_frequency_dates(start_datetime,
-                                end_datetime,
-                                "1W-MON",
-                                pd.DataFrame(),
-                                "GRTETH")
+    adjust_ohlc_frequency_dates(
+        start_datetime, end_datetime, "1W-MON", pd.DataFrame(), "GRTETH"
+    )
     captured = capfd.readouterr()
     test_output = "GRTETH 1W-MON: Not enough data.\n"
     assert captured.out == test_output
@@ -167,18 +162,16 @@ def test_adjust_ohlc_frequency_dates(capfd):
         "tests/fixtures/tests_data/"
         "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1H.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
-    df_ohlc = adjust_ohlc_frequency_dates(start_datetime,
-                                          end_datetime,
-                                          "1H",
-                                          df_ohlc_not_adjusted,
-                                          "GRTETH")
+    df_ohlc = adjust_ohlc_frequency_dates(
+        start_datetime, end_datetime, "1H", df_ohlc_not_adjusted, "GRTETH"
+    )
     df_ohlc_test = pd.read_csv(
         "tests/fixtures/tests_data/"
         "GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00_1H.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
     assert df_ohlc.equals(df_ohlc_test)
 
@@ -187,7 +180,7 @@ def test_trades_to_ohlc():
     df_trades = pd.read_csv(
         "tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
     # Test with volume in base asset.
     df_ohlc = trades_to_ohlc(df_trades, "1W-MON", False)
@@ -195,11 +188,11 @@ def test_trades_to_ohlc():
         "tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00"
         "-00_1W_not_adjusted.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
     df_ohlc_test.index.freq = "W-MON"
-    df_ohlc['volume'] = df_ohlc['volume'].apply(lambda x: int(100 * x))
-    df_ohlc_test['volume'] = df_ohlc_test['volume'].apply(lambda x: int(100 * x))
+    df_ohlc["volume"] = df_ohlc["volume"].apply(lambda x: int(100 * x))
+    df_ohlc_test["volume"] = df_ohlc_test["volume"].apply(lambda x: int(100 * x))
     assert df_ohlc.equals(df_ohlc_test)
 
     # Test with volume in quote asset
@@ -208,9 +201,9 @@ def test_trades_to_ohlc():
         "tests/fixtures/tests_data/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00"
         "-00_1W_not_adjusted_quote.csv",
         index_col="time",
-        parse_dates=True
+        parse_dates=True,
     )
     df_ohlc_test.index.freq = "W-MON"
-    df_ohlc['volume'] = df_ohlc['volume'].apply(lambda x: int(100 * x))
-    df_ohlc_test['volume'] = df_ohlc_test['volume'].apply(lambda x: int(100 * x))
+    df_ohlc["volume"] = df_ohlc["volume"].apply(lambda x: int(100 * x))
+    df_ohlc_test["volume"] = df_ohlc_test["volume"].apply(lambda x: int(100 * x))
     assert df_ohlc.equals(df_ohlc_test)

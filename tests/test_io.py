@@ -1,8 +1,10 @@
-from krakenohlc import define_filepath, read_csv, create_data_directory
 import os
+import shutil
+
 import pandas as pd
 import pytest
-import shutil
+
+from krakenohlc import create_data_directory, define_filepath, read_csv
 
 
 def test_define_filepath():

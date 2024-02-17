@@ -10,3 +10,6 @@ data/
 
 # Pytest
 .pytest_cache
+
+# Others
+config_perso.yaml
