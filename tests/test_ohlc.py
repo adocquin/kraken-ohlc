@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 import pandas as pd
 import pytest
@@ -123,7 +124,7 @@ def test_check_trades_ohlc_start_end_dates():
     assert check_trades_ohlc_start_end_dates(end_date, ohlc_date, "1W-MON") is False
 
 
-def test_adjust_ohlc_frequency_dates(capfd):
+def test_adjust_ohlc_frequency_dates(caplog: pytest.LogCaptureFixture):
     # Test with adjusted dates on 1W frequency
     start_datetime = datetime.datetime.strptime(
         "2021-03-28 00:00:00", "%Y-%m-%d %H:%M:%S"
@@ -149,13 +150,12 @@ def test_adjust_ohlc_frequency_dates(capfd):
     assert df_ohlc.equals(df_ohlc_test)
 
     # Test with empty adjusted DataFrame on 1W frequency
-    capfd.readouterr()
+    caplog.set_level(logging.INFO)
     adjust_ohlc_frequency_dates(
         start_datetime, end_datetime, "1W-MON", pd.DataFrame(), "GRTETH"
     )
-    captured = capfd.readouterr()
     test_output = "GRTETH 1W-MON: Not enough data.\n"
-    assert captured.out == test_output
+    assert test_output in caplog.text
 
     # Test without adjusted dates on 1H frequency
     df_ohlc_not_adjusted = pd.read_csv(

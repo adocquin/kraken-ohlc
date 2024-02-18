@@ -16,7 +16,7 @@ def datetime_as_utc_unix(date: datetime) -> int:
 
 def trades_as_dataframe(trades: list) -> pd.DataFrame:
     """
-    Convert Kraken api downloaded trades as pandas DataFrame.
+    Convert Kraken api downloaded trades ass pandas DataFrame.
     Is called by get_trades function.
 
     :param trades: Downloaded data from kraken api as dictionary.
@@ -60,7 +60,7 @@ def download_trades(
     """
     start_unix_time = datetime_as_utc_unix(start_datetime)
     end_unix_time = datetime_as_utc_unix(end_datetime)
-    trades = ka.get_trades_history(pair, start_unix_time, end_unix_time, True)
+    trades = ka.get_trades_history(pair, start_unix_time, end_unix_time)
     df_trades = trades_as_dataframe(trades)
     df_trades = df_trades[df_trades.index < end_datetime]
     return df_trades

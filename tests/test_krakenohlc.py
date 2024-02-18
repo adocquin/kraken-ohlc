@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 from unittest.mock import patch
@@ -6,8 +7,7 @@ import pandas as pd
 import pytest
 import vcr
 
-from krakenohlc import (handle_pair_frequency_ohlc, handle_pair_trades,
-                        kraken_ohlc)
+from krakenohlc import handle_pair_frequency_ohlc, handle_pair_trades, kraken_ohlc
 
 
 @pytest.fixture
@@ -22,25 +22,25 @@ def cleandir(mock_test_data_path):
 
 @pytest.mark.usefixtures("cleandir")
 def test_handle_pair_trades(
-    capfd, mock_pair, mock_config, mock_test_data_path, mock_df_trade
+    caplog, mock_pair, mock_config, mock_test_data_path, mock_df_trade
 ):
     # Test trades DataFrame was correctly saved and is return
-    capfd.readouterr()
+    caplog.set_level(logging.INFO)
     df_trades_read = handle_pair_trades(mock_pair, mock_config, mock_test_data_path)
     assert df_trades_read.shape == mock_df_trade.shape
-    captured = capfd.readouterr()
     test_output = (
         "GRTETH: Trades already existing at "
         "trade_history/GRTETH_2021-03-28T00-00-00_2021-05-04T15-00-00"
         ".csv.\n"
     )
-    assert captured.out == test_output
+    assert test_output in caplog.text
 
 
 @pytest.mark.usefixtures("cleandir")
 def test_handle_pair_frequency_ohlc(
-    capfd, mock_pair, mock_config, mock_df_trade, mock_test_data_path
+    caplog, mock_pair, mock_config, mock_df_trade, mock_test_data_path
 ):
+    caplog.set_level(logging.INFO)
     # Test OHLC DataFrames are correctly generated and saved
     frequencies = [
         "1T",
@@ -79,17 +79,15 @@ def test_handle_pair_frequency_ohlc(
 
     # Test OHLC DataFrames aren't created again if already existing.
     for frequency in frequencies:
-        capfd.readouterr()
         handle_pair_frequency_ohlc(
             mock_pair, mock_config, mock_df_trade, frequency, mock_test_data_path
         )
-        captured = capfd.readouterr()
         frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
         test_output = (
             f"GRTETH {frequency}: Already existing at ohlc/GRTETH_2021-"
             f"03-28T00-00-00_2021-05-04T15-00-00_{frequency}.csv.\n"
         )
-        assert captured.out == test_output
+        assert test_output in caplog.text
 
 
 @vcr.use_cassette("tests/fixtures/vcr_cassettes/test_kraken_ohlc.yaml")

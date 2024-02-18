@@ -1,9 +1,13 @@
+import logging
+
 import pandas as pd
 
 from .config import Config
 from .io import create_data_directory, define_filepath, read_csv
 from .ohlc import adjust_ohlc_frequency_dates, trades_to_ohlc
 from .trades import download_trades
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def handle_pair_trades(
@@ -29,9 +33,9 @@ def handle_pair_trades(
         )
         if config.save_trade_history_as_csv:
             df_trades.to_csv(data_folder_path + "/" + trades_filepath)
-            print(f"{pair}: Trades saved to {trades_filepath}.")
+            logger.info(f"{pair}: Trades saved to {trades_filepath}.")
     else:
-        print(f"{pair}: Trades already existing at {trades_filepath}.")
+        logger.info(f"{pair}: Trades already existing at {trades_filepath}.")
     return df_trades
 
 
@@ -71,10 +75,10 @@ def handle_pair_frequency_ohlc(
         if not df_ohlc.empty:
             df_ohlc.to_csv(data_folder_path + "/" + ohlc_filepath)
             frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
-            print(f"{pair} {frequency}: Saved to {ohlc_filepath}.")
+            logger.info(f"{pair} {frequency}: Saved to {ohlc_filepath}.")
     else:
         frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
-        print(f"{pair} {frequency}: Already existing at {ohlc_filepath}.")
+        logger.info(f"{pair} {frequency}: Already existing at {ohlc_filepath}.")
 
 
 def kraken_ohlc(data_folder_path: str) -> None:
