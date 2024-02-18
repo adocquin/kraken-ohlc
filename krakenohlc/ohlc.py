@@ -1,7 +1,9 @@
 import datetime
+import logging
 
 import pandas as pd
 
+logger: logging.Logger = logging.getLogger(__name__)
 FREQUENCIES_REPLACE: dict[str, str] = {
     "M": "min",
     "1W": "1W-MON",
@@ -96,10 +98,10 @@ def adjust_ohlc_frequency_dates(
             df = df[:-1]
 
     if df.empty:
-        print(f"{pair} {frequency}: Not enough data.")
+        logger.info(f"{pair} {frequency}: Not enough data.")
     else:
         frequency = frequency.replace("T", "M").replace("1W-MON", "1W")
-        print(
+        logger.info(
             f"{pair} {frequency}: OHLC data saved from {df.index[0]} to {df.index[-1]}."
         )
     return df

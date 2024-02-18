@@ -1,7 +1,7 @@
 attrs==23.2.0
 idna==3.6
 iniconfig==2.0.0
-krakenapi==1.0.1
+krakenapi==1.0.2
 multidict==6.0.5
 numpy==1.26.4
 packaging==23.2

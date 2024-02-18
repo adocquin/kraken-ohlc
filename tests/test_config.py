@@ -24,7 +24,7 @@ def test_config_init_properties(mock_correct_config):
     assert config.start_datetime == datetime.datetime.strptime(
         "2021-03-28 00:00:00", "%Y-%m-%d %H:%M:%S"
     )
-    assert type(config.end_datetime) == datetime.datetime
+    assert isinstance(config.end_datetime, datetime.datetime)
     assert config.end_datetime == datetime.datetime.strptime(
         "2021-05-04 15:00:00", "%Y-%m-%d %H:%M:%S"
     )
@@ -41,7 +41,7 @@ def test_config_init_properties(mock_correct_config):
         "ZJPY",
         "ZUSD",
     ]
-    assert type(config.ka) == KrakenApi
+    assert isinstance(config.ka, KrakenApi)
     assert config.ohlc_frequencies == ["1min", "1h", "4h", "1D"]
 
     # Config with custom pairs
@@ -55,11 +55,11 @@ def test_config_init_properties(mock_correct_config):
 
 def test_read_configuration_file(mock_correct_config, mock_config_error):
     # Test raise FileNotFoundError.
-    e_info_value = mock_config_error(mock_correct_config, FileNotFoundError)
-    assert e_info_value == "Configuration file not found."
+    e_info_value: str = mock_config_error(mock_correct_config, FileNotFoundError)
+    assert "Configuration file not found." in e_info_value
 
     # Test incorrect format
-    e_info_value = mock_config_error("", AttributeError)
+    e_info_value: str = mock_config_error("", AttributeError)
     assert "Configuration file incorrectly formatted:" in e_info_value
 
 
@@ -69,7 +69,7 @@ def test_check_configuration(mock_correct_config, mock_config_error):
         'download_start_date: "2021-03-28 00:00:00"',
         "",
     )
-    e_info_value = mock_config_error(config_missing_api_public_key, ValueError)
+    e_info_value: str = mock_config_error(config_missing_api_public_key, ValueError)
     assert "Please provide a trades download start date." in e_info_value
     # Test missing download end date.
     config_missing_api_public_key = mock_correct_config.replace(
@@ -84,7 +84,7 @@ def test_check_configuration(mock_correct_config, mock_config_error):
         'download_start_date: "21-03-28 00:00:00"',
     )
     e_info_value = mock_config_error(config_bad_download_start_date, ValueError)
-    assert "Download start date incorrectly formatted:" in e_info_value
+    assert "Download start date incorrectly formatted." in e_info_value
     config_bad_download_start_date = mock_correct_config.replace(
         'download_start_date: "2021-03-28 00:00:00"',
         'download_start_date: "2121-03-28 00:00:00"',
@@ -98,7 +98,7 @@ def test_check_configuration(mock_correct_config, mock_config_error):
         'download_end_date: "21-05-04 15:00:00"',
     )
     e_info_value = mock_config_error(config_bad_download_end_date, ValueError)
-    assert "Download end date incorrectly formatted:" in e_info_value
+    assert "Download end date incorrectly formatted." in e_info_value
 
     # Test missing OHLC frequency list
     config_missing_ohlc_frequencies = mock_correct_config.replace(
@@ -120,14 +120,14 @@ def test_check_configuration(mock_correct_config, mock_config_error):
     config_missing_save_trade_history = mock_correct_config.replace(
         "save_trade_history_as_csv: True", ""
     )
-    e_info_value = mock_config_error(config_missing_save_trade_history, ValueError)
+    e_info_value: str = mock_config_error(config_missing_save_trade_history, ValueError)
     assert "Please provide save_trade_history value (True or False)." in e_info_value
 
     # Test missing quote assets to download
     config_missing_quote_assets = mock_correct_config.replace(
         "  quote_assets:\n    - XXBT\n    - USDT", ""
     )
-    e_info_value = mock_config_error(config_missing_quote_assets, ValueError)
+    e_info_value: str = mock_config_error(config_missing_quote_assets, ValueError)
     assert "Please provide quotes assets to download." in e_info_value
 
     # Test missing pairs to download option
@@ -137,7 +137,7 @@ def test_check_configuration(mock_correct_config, mock_config_error):
     config_missing_pairs = config_missing_pairs.replace(
         "download_custom_pairs:\n  - GRTETH\n  - KEEPXBT", ""
     )
-    e_info_value = mock_config_error(config_missing_pairs, ValueError)
+    e_info_value: str = mock_config_error(config_missing_pairs, ValueError)
     assert "Please provide pairs to download option." in e_info_value
 
 
@@ -157,5 +157,5 @@ def test_get_configuration_pairs(mock_correct_config, mock_config_error):
             "download_custom_pairs:\n  - GRTETH\n  - KEEPXBT",
             "download_custom_pairs:\n  - FAKE",
         )
-        e_info_value = mock_config_error(config_pair_not_available, ValueError)
-        assert e_info_value == "FAKE pair not available on Kraken."
+        e_info_value: str = mock_config_error(config_pair_not_available, ValueError)
+        assert "FAKE pair not available on Kraken." in e_info_value

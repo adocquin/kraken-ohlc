@@ -10,6 +10,9 @@ data/
 
 # Pytest
 .pytest_cache
+.coverage
+htmlcov/
 
 # Others
 config_perso.yaml
+notes.txt

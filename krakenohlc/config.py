@@ -1,10 +1,12 @@
 import datetime
+import logging
 
 import yaml
 from krakenapi import KrakenApi
 
 from .ohlc import pandas_to_kraken_ohlc_frequencies
 
+logger: logging.Logger = logging.getLogger(__name__)
 ERROR_PREFIX: str = "Configuration file incorrectly formatted:"
 
 
@@ -58,9 +60,9 @@ class Config:
                     self.download_custom_pairs = config.get("download_custom_pairs")
                     self.ohlc_frequencies = config.get("ohlc_frequencies")
                 except (AttributeError, yaml.YAMLError) as e:
-                    raise AttributeError(ERROR_PREFIX + f": {e}")
-        except EnvironmentError:
-            raise FileNotFoundError("Configuration file not found.")
+                    raise AttributeError(f"{ERROR_PREFIX}") from e
+        except EnvironmentError as e:
+            raise FileNotFoundError("Configuration file not found.") from e
 
     def __check_configuration(self) -> None:
         """
@@ -73,13 +75,10 @@ class Config:
         )
 
         # Validate start and end datetimes
-        if not self.start_datetime:
+        if not self.start_datetime or not self.end_datetime:
+            missing: str = "start" if not self.start_datetime else "end"
             raise ValueError(
-                f"{ERROR_PREFIX} Please provide a trades download start date."
-            )
-        if not self.end_datetime:
-            raise ValueError(
-                f"{ERROR_PREFIX} Please provide a trades download end date."
+                f"{ERROR_PREFIX} Please provide a trades download {missing} date."
             )
 
         # Parse and validate start datetime
@@ -87,24 +86,26 @@ class Config:
             self.start_datetime = datetime.datetime.strptime(
                 self.start_datetime, "%Y-%m-%d %H:%M:%S"
             )
-            if self.start_datetime >= current_datetime:
-                raise ValueError(f"{ERROR_PREFIX} The start date must be in the past.")
         except ValueError as e:
             raise ValueError(
-                f"{ERROR_PREFIX} Download start date incorrectly formatted: {e}"
-            )
+                f"{ERROR_PREFIX} Download start date incorrectly formatted."
+            ) from e
+        if self.start_datetime >= current_datetime:
+            raise ValueError(f"{ERROR_PREFIX} The start date must be in the past.")
 
         # Parse and validate end datetime
         try:
             self.end_datetime = datetime.datetime.strptime(
                 self.end_datetime, "%Y-%m-%d %H:%M:%S"
             )
-            if self.end_datetime >= current_datetime:
-                self.end_datetime = current_datetime
         except ValueError as e:
             raise ValueError(
-                f"{ERROR_PREFIX} Download end date incorrectly formatted: {e}"
-            )
+                f"{ERROR_PREFIX} Download end date incorrectly formatted."
+            ) from e
+        if self.end_datetime >= current_datetime:
+            self.end_datetime = current_datetime
+
+        # Check other configurations
         if self.ohlc_frequencies is None:
             raise ValueError(f"{ERROR_PREFIX} Please provide ohlc frequencies.")
         if self.volume_in_quote_asset is None:
@@ -112,7 +113,6 @@ class Config:
                 f"{ERROR_PREFIX} Please provide volume_in_quote_asset value "
                 "(True or False)."
             )
-        # Check other configurations
         if not self.save_trade_history_as_csv:
             raise ValueError(
                 f"{ERROR_PREFIX} Please provide save_trade_history value "
@@ -139,7 +139,10 @@ class Config:
             self.pairs = list()
             quote_assets = self.download_all_associated_pairs.get("quote_assets")
             for quote_asset in quote_assets:
-                asset = self.ka.get_asset_altname(quote_asset)
+                try:
+                    asset = self.ka.get_asset_altname(quote_asset)
+                except ValueError as e:
+                    raise ValueError(f"Invalid quote asset: {quote_asset}") from e
                 self.pairs += [pair for pair in asset_pairs if asset in pair]
                 if not self.pairs:
                     raise ValueError(
@@ -162,4 +165,4 @@ class Config:
                 if pair not in asset_pairs:
                     raise ValueError(f"{pair} pair not available on Kraken.")
             self.pairs = self.download_custom_pairs
-        print(f"Pairs to download: {self.pairs}")
+        logger.info(f"Pairs to download: {self.pairs}")
